@@ -1,6 +1,8 @@
 package com.akshata.studentManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -15,31 +17,42 @@ public class StudentController {
 
     //get information with admission number
     @GetMapping("/get_student")
-    public Student getStudent(@RequestParam("id") int id){
-        return studentService.getStudent(id);
+    public ResponseEntity getStudent(@RequestParam("id") int id){
+        Student student =  studentService.getStudent(id);
+        return new ResponseEntity<>(student, HttpStatus.FOUND);
     }
+
+    //adding the information
+    @PostMapping("/add_student")
+    public ResponseEntity addStudent(@RequestBody Student student){
+        String response = studentService.addStudent(student);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete_student/{id}")
+    public ResponseEntity deleteStudent(@PathVariable("id")int id){
+        String response = studentService.deleteStudent(id);
+        if(response.equals("Invalid id")){
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response,HttpStatus.FOUND);
+    }
+
+    @PutMapping("/update_student")
+    public ResponseEntity updateStudent(@RequestParam("id") int id, @RequestParam("age")int age){
+        String response = studentService.updateStudent(id,age);
+        if(response==null){
+            return new ResponseEntity<>("Invalid request",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Updated Successfully",HttpStatus.ACCEPTED);
+    }
+
 
     //get information with name
 //    @GetMapping("/get_student_name")
 //    public Student getStudent(@RequestParam("name") String name){
 //        return db.get(name);
 //    }
-
-    //adding the information
-    @PostMapping("/add_student")
-    public String addStudent(@RequestBody Student student){
-        return studentService.addStudent(student);
-    }
-
-    @DeleteMapping("/delete_student/{id}")
-    public String deleteStudent(@PathVariable("id")int id){
-        return studentService.deleteStudent(id);
-    }
-
-    @PutMapping("/update_student")
-    public String updateStudent(@RequestParam("id") int id, @RequestParam("age")int age){
-        return studentService.updateStudent(id,age);
-    }
 
 }
 

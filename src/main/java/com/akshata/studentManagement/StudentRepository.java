@@ -33,7 +33,7 @@ public class StudentRepository {
 
     public String updateStudent(int id, int age){
         if(!db.containsKey(id))
-            return "Invalid id";
+            return null;
         Student student= db.get(id);
         student.setAge(age);
         //db.put(id,student);
